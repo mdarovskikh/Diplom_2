@@ -1,4 +1,6 @@
-import client.StellarBurgersClientApi;
+package api.tests;
+
+import api.client.StellarBurgersClientApi;
 import api.model.User;
 import api.utils.UserGenerator;
 import io.qameta.allure.Description;
@@ -6,6 +8,7 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.Before;
 import org.junit.Test;
 
+import static api.utils.StatusCodes.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
