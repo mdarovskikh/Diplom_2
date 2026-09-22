@@ -1,4 +1,4 @@
-package API.model;
+package api.data;
 
 import java.util.List;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package API.model;
+package api.model;
 
 public class User {
     private String email;

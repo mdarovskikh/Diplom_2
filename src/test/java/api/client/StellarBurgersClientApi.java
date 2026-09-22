@@ -1,4 +1,4 @@
-package client;
+package api.client;
 
 import api.model.Order;
 import api.model.User;
@@ -23,7 +23,7 @@ public class StellarBurgersClientApi {
     public Response createUser(User user) {
         return given()
                 .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
+                .contentType(io.restassured.http.ContentType.JSON)
                 .body(gson.toJson(user))
                 .when()
                 .post("/api/auth/register");
@@ -37,10 +37,15 @@ public class StellarBurgersClientApi {
         String body = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", email, password);
         return given()
                 .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
+                .contentType(io.restassured.http.ContentType.JSON)
                 .body(body)
+                .log().all()
                 .when()
-                .post("/api/auth/login");
+                .post("/api/auth/login")
+                .then()
+                .log().all()
+                .extract()
+                .response();
     }
 
     // == ЗАКАЗЫ ==
@@ -50,7 +55,7 @@ public class StellarBurgersClientApi {
     public Response createOrder(String accessToken, Order order) {
         return given()
                 .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
+                .contentType(io.restassured.http.ContentType.JSON)
                 .header("Authorization", accessToken)
                 .body(gson.toJson(order))
                 .when()
@@ -64,10 +69,15 @@ public class StellarBurgersClientApi {
     public Response createOrderWithoutAuth(Order order) {
         return given()
                 .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
+                .contentType(io.restassured.http.ContentType.JSON)
                 .body(gson.toJson(order))
+                .log().all()
                 .when()
-                .post("/api/orders");
+                .post("/api/orders")
+                .then()
+                .log().all()
+                .extract()
+                .response();
     }
 
     // === ИНГРЕДИЕНТЫ ===
