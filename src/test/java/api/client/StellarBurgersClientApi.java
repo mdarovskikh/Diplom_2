@@ -1,14 +1,17 @@
 package api.client;
 
-import api.model.Order;
-import api.model.User;
+import api.model.*;
 import com.google.gson.Gson;
+import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
 
+/**
+ * Убрана ручная сборка JSON через String.format.
+ */
 public class StellarBurgersClientApi {
     private static final String BASE_URL = "https://stellarburgers.education-services.ru";
     private final Gson gson = new Gson();
@@ -20,11 +23,17 @@ public class StellarBurgersClientApi {
     /**
      * POST /api/auth/register — создание пользователя
      */
+    @Step("POST /api/auth/register — создание пользователя {user.email}")
     public Response createUser(User user) {
+        RegisterRequest body = new RegisterRequest(
+                user.getEmail(),
+                user.getPassword(),
+                user.getName()
+        );
         return given()
                 .baseUri(BASE_URL)
-                .contentType(io.restassured.http.ContentType.JSON)
-                .body(gson.toJson(user))
+                .contentType("application/json")
+                .body(gson.toJson(body))
                 .when()
                 .post("/api/auth/register");
     }
@@ -33,31 +42,30 @@ public class StellarBurgersClientApi {
      * POST /api/auth/login — авторизация пользователя
      * ответ сервера содержит accessToken и refreshToken при успешном запросе
      */
+    @Step("POST /api/auth/login — авторизация {email}")
     public Response loginUser(String email, String password) {
-        String body = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", email, password);
+        LoginRequest body = new LoginRequest(email, password);
         return given()
                 .baseUri(BASE_URL)
-                .contentType(io.restassured.http.ContentType.JSON)
-                .body(body)
-                .log().all()
+                .contentType("application/json")
+                .body(gson.toJson(body))
                 .when()
-                .post("/api/auth/login")
-                .then()
-                .log().all()
-                .extract()
-                .response();
+                .post("/api/auth/login");
     }
 
     // == ЗАКАЗЫ ==
     /**
      * POST /api/orders — создание заказа с авторизацией
      */
+    @Step("POST /api/orders — создание заказа с авторизацией")
     public Response createOrder(String accessToken, Order order) {
+        OrderRequest body = new OrderRequest(order.getIngredients());
+
         return given()
                 .baseUri(BASE_URL)
-                .contentType(io.restassured.http.ContentType.JSON)
+                .contentType("application/json")
                 .header("Authorization", accessToken)
-                .body(gson.toJson(order))
+                .body(gson.toJson(body))
                 .when()
                 .post("/api/orders");
     }
@@ -66,28 +74,27 @@ public class StellarBurgersClientApi {
      * POST /api/orders — создание заказа без авторизации
      * Используется для проверки ошибки 401 Unauthorized
      */
+    @Step("POST /api/orders — создание заказа без авторизации")
     public Response createOrderWithoutAuth(Order order) {
+        OrderRequest body = new OrderRequest(order.getIngredients());
+
         return given()
                 .baseUri(BASE_URL)
-                .contentType(io.restassured.http.ContentType.JSON)
-                .body(gson.toJson(order))
-                .log().all()
+                .contentType("application/json")
+                .body(gson.toJson(body))
                 .when()
-                .post("/api/orders")
-                .then()
-                .log().all()
-                .extract()
-                .response();
+                .post("/api/orders");
     }
 
     // === ИНГРЕДИЕНТЫ ===
     /**
      * GET /api/ingredients — получение списка всех доступных ингредиентов
      */
+    @Step("GET /api/ingredients — получение списка ингредиентов")
     public Response getIngredients() {
         return given()
                 .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
+                .contentType("application/json")
                 .when()
                 .get("/api/ingredients");
     }
