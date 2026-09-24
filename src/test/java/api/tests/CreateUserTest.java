@@ -13,7 +13,7 @@ import org.junit.Test;
  * Проверяют три сценария:
  * - создание уникального пользователя
  * - создание пользователя, который уже зарегистрирован
- * - создание пользователя без обязательного поля (нп без email)
+ * - создание пользователя без обязательных полей (разбиты на 3 теста)
  * после ревью изменения, тк добавила Steps-классы, объем кода стал меньше в тестовых классах
  */
 public class CreateUserTest {
@@ -52,14 +52,41 @@ public class CreateUserTest {
 
     /**
      * Проверяет регистрацию без обязательного поля
-     * Отправляем null вместо email, остальные поля заполнены
      * Ожидаем: 403 Forbidden
      */
     @Test
     @DisplayName("Создание пользователя без обязательного поля Email")
     @Description("Если не заполнить email, должна вернуться ошибка 403")
     public void createUserWithoutEmail() {
-        User withoutEmail = new User(null, "password", "Name");
+        User withoutEmail = new User(
+                null,
+                UserGenerator.validPassword(),
+                UserGenerator.uniqueName()
+                );
         userSteps.createWithoutRequiredFieldsAndCheckError(withoutEmail);
+    }
+
+    @Test
+    @DisplayName("Создание пользователя без обязательного поля Password")
+    @Description("Если не заполнить Password, должна вернуться ошибка 403")
+    public void createUserWithoutPassword() {
+        User withoutPassword = new User(
+                UserGenerator.uniqueEmail(),
+                null,
+                UserGenerator.uniqueName()
+        );
+        userSteps.createWithoutRequiredFieldsAndCheckError(withoutPassword);
+    }
+
+    @Test
+    @DisplayName("Создание пользователя без обязательного поля Name")
+    @Description("Если не заполнить Name, должна вернуться ошибка 403")
+    public void createUserWithoutName() {
+        User withoutName = new User(
+                UserGenerator.uniqueEmail(),
+                UserGenerator.validPassword(),
+                null
+        );
+        userSteps.createWithoutRequiredFieldsAndCheckError(withoutName);
     }
 }

@@ -4,13 +4,30 @@ import api.model.User;
 
 import java.util.UUID;
 
-public class UserGenerator {
-    public static User randomUser() {
+public final class UserGenerator {
+    private UserGenerator() {
+
+    }
+
+    public static String uniqueEmail() {
+        long timestamp = System.currentTimeMillis();
         String uuid = UUID.randomUUID().toString().substring(0, 8);
-        return new User(
-                "test_" + uuid + "@example.com",
-                "p" + uuid,
-                "puh" + uuid
-        );
+        return "puh_" + timestamp + "_" + uuid + "@example.com";
+    }
+
+    public static String uniqueName() {
+        return "Puh_" + System.currentTimeMillis();
+    }
+
+    public static String validPassword() {
+        return "pass" + System.currentTimeMillis();
+    }
+
+    public static String invalidPassword() {
+        return "666";
+    }
+
+    public static User randomUser() {
+        return new User(uniqueEmail(), validPassword(), uniqueName());
     }
 }
