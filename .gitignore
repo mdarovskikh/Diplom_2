@@ -40,3 +40,7 @@ build/
 
 *.log
 .allure/
+
+# Но не игнорировать сам отчёт:
+!allure-report/
+!allure-report/**

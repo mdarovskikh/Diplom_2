@@ -14,23 +14,25 @@ public final class IngredientData {
     }
     // = ВАЛИДНЫЕ ID ИНГРЕДИЕНТОВ =
     /** Флюоресцентная булка R2-D3 (тип bun) */
-    public static final String VALID_BUN_ID = "61c0c5a71d1f82001bdaaa6d";
+    public static final String FLUORESCENT_BUN_ID = "61c0c5a71d1f82001bdaaa6d";
     /** Краторная булка N-200i (тип bun) */
-    public static final String VALID_BUN_ID_2 = "61c0c5a71d1f82001bdaaa6c";
+    public static final String CRATER_BUN_ID = "61c0c5a71d1f82001bdaaa6c";
     /** Мясо бессмертных моллюсков Protostomia (тип main) */
-    public static final String VALID_MAIN_ID = "61c0c5a71d1f82001bdaaa6f";
+    public static final String PROTOSTOMIA_MEAT_ID = "61c0c5a71d1f82001bdaaa6f";
     /** Соус Spicy-X (тип sauce) */
-    public static final String VALID_SAUCE_ID = "61c0c5a71d1f82001bdaaa72";
+    public static final String SPICY_SAUCE_ID = "61c0c5a71d1f82001bdaaa72";
     /** Соус фирменный Space Sauce (тип sauce) */
-    public static final String VALID_SAUCE_ID_2 = "61c0c5a71d1f82001bdaaa73";
+    public static final String SPACE_SAUCE_ID = "61c0c5a71d1f82001bdaaa73";
+
+
     // = ГОТОВЫЕ НАБОРЫ ИНГРЕДИЕНТОВ =
     public static final List<String> FULL_BURGER_INGREDIENTS = Arrays.asList(
-            VALID_BUN_ID,
-            VALID_MAIN_ID,
-            VALID_SAUCE_ID_2
+            FLUORESCENT_BUN_ID,
+            PROTOSTOMIA_MEAT_ID,
+            SPACE_SAUCE_ID
     );
     /** Бургер только с булкой — минимально валидный набор */
-    public static final List<String> BUN_ONLY_INGREDIENTS = List.of(VALID_BUN_ID_2);
+    public static final List<String> BUN_ONLY_INGREDIENTS = List.of(CRATER_BUN_ID);
     /** Пустой список для проверки ошибки 400 */
     public static final List<String> EMPTY_INGREDIENTS = List.of();
     // == НЕВАЛИДНЫЕ ID ИНГРЕДИЕНТОВ ==
