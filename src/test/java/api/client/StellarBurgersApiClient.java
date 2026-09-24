@@ -1,8 +1,11 @@
 package api.client;
 
-import api.model.*;
+import api.model.LoginRequest;
+import api.model.Order;
+import api.model.OrderRequest;
+import api.model.RegisterRequest;
+import api.model.User;
 import com.google.gson.Gson;
-import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -10,26 +13,22 @@ import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 
 /**
- * Убрана ручная сборка JSON через String.format.
+ * Клиент API Stellar Burgers. Теперь здесь только HTTP
+ * Тела запросов сериализуются через Gson
  */
-public class StellarBurgersClientApi {
+public class StellarBurgersApiClient {
+
     private static final String BASE_URL = "https://stellarburgers.education-services.ru";
     private final Gson gson = new Gson();
+
     static {
         RestAssured.filters(new AllureRestAssured());
     }
 
-    // = ПОЛЬЗОВАТЕЛИ =
-    /**
-     * POST /api/auth/register — создание пользователя
-     */
-    @Step("POST /api/auth/register — создание пользователя {user.email}")
+    /** POST /api/auth/register — регистрация пользователя. */
     public Response createUser(User user) {
         RegisterRequest body = new RegisterRequest(
-                user.getEmail(),
-                user.getPassword(),
-                user.getName()
-        );
+                user.getEmail(), user.getPassword(), user.getName());
         return given()
                 .baseUri(BASE_URL)
                 .contentType("application/json")
@@ -38,11 +37,7 @@ public class StellarBurgersClientApi {
                 .post("/api/auth/register");
     }
 
-    /**
-     * POST /api/auth/login — авторизация пользователя
-     * ответ сервера содержит accessToken и refreshToken при успешном запросе
-     */
-    @Step("POST /api/auth/login — авторизация {email}")
+    /** POST /api/auth/login — авторизация. */
     public Response loginUser(String email, String password) {
         LoginRequest body = new LoginRequest(email, password);
         return given()
@@ -53,14 +48,9 @@ public class StellarBurgersClientApi {
                 .post("/api/auth/login");
     }
 
-    // == ЗАКАЗЫ ==
-    /**
-     * POST /api/orders — создание заказа с авторизацией
-     */
-    @Step("POST /api/orders — создание заказа с авторизацией")
+    /** POST /api/orders — создание заказа с авторизацией. */
     public Response createOrder(String accessToken, Order order) {
         OrderRequest body = new OrderRequest(order.getIngredients());
-
         return given()
                 .baseUri(BASE_URL)
                 .contentType("application/json")
@@ -70,14 +60,9 @@ public class StellarBurgersClientApi {
                 .post("/api/orders");
     }
 
-    /**
-     * POST /api/orders — создание заказа без авторизации
-     * Используется для проверки ошибки 401 Unauthorized
-     */
-    @Step("POST /api/orders — создание заказа без авторизации")
+    /** POST /api/orders — создание заказа без авторизации. */
     public Response createOrderWithoutAuth(Order order) {
         OrderRequest body = new OrderRequest(order.getIngredients());
-
         return given()
                 .baseUri(BASE_URL)
                 .contentType("application/json")
@@ -86,16 +71,16 @@ public class StellarBurgersClientApi {
                 .post("/api/orders");
     }
 
-    // === ИНГРЕДИЕНТЫ ===
-    /**
-     * GET /api/ingredients — получение списка всех доступных ингредиентов
-     */
-    @Step("GET /api/ingredients — получение списка ингредиентов")
-    public Response getIngredients() {
-        return given()
+    /** DELETE /api/auth/user — удаление пользователя по токену. */
+    public void deleteUser(String accessToken) {
+        if (accessToken == null) {
+            return;
+        }
+        given()
                 .baseUri(BASE_URL)
                 .contentType("application/json")
+                .header("Authorization", accessToken)
                 .when()
-                .get("/api/ingredients");
+                .delete("/api/auth/user");
     }
 }
